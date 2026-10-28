@@ -188,7 +188,16 @@ for (i=0;i<ns;i++) {
 					flag=0;
 					kk=0;
 
-					if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
+					if (currncat == 1) {
+						/* Binary observations require only a sign constraint. Use
+						   log-tail probabilities to avoid finite truncation bounds
+						   and underflow for unlikely observed categories. */
+						int lower_tail = (REAL(Y)[t+(ncon+j)*IY] == 2);
+						double sd = sqrt(omegadrawmiss[0]);
+						double lp = pnorm5(0, mumiss[0], sd, lower_tail, 1);
+						imp[t+pos*IY] = qnorm5(log(unif_rand()) + lp,
+						                      mumiss[0], sd, lower_tail, 1);
+					} else if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
 						while ((flag==0)&(kk<10000)) {
 							r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,0);
 							maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
