@@ -328,12 +328,16 @@ for (i=0;i<ns;i++) {
 						sdom=0.1*sqrt(REAL(omega)[j+JY*j]*REAL(omega)[k+JY*k]);
 						meanom=REAL(omega)[j+JY*k];
 					}
-					kk=0;
-					while ((flag==0)&(kk<100)) {
-						newomega[j+JY*k]=r8_normal_sample(meanom,sdom,0);
-						newomega[k+JY*j]=newomega[j+JY*k];
-						flag=checkposdef(JY,newomega,help,help5);
-						kk++;
+					/* Make one proposal and retain the current state if it is
+					   invalid. Retrying until positive definite conditions the
+					   proposal on a state-dependent feasible interval. */
+					newomega[j+JY*k]=r8_normal_sample(meanom,sdom,0);
+					newomega[k+JY*j]=newomega[j+JY*k];
+					flag=checkposdef(JY,newomega,help,help5);
+					if (flag == 0) {
+						newomega[j+JY*k]=REAL(omega)[j+JY*k];
+						newomega[k+JY*j]=REAL(omega)[k+JY*j];
+						continue;
 					}
 					r8mat_pofac(JY,newomega,help,7);
 					detom=r8mat_podet(JY, help);
