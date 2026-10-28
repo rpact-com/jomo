@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased (based on 2.7-6)
+## 2.7.6.9000 — Unreleased (based on 2.7-6)
+
+The development version distinguishes this corrected fork from CRAN 2.7-6
+when installing it in a separate library for comparison. Stale CRAN archive
+metadata and the generated `MD5` manifest have been removed from the source
+tree; `R CMD build` generates the distribution's checksums.
 
 ### Exact binary latent draws
 
@@ -60,3 +65,9 @@ state-dependent proposal scales for free continuous variances in that branch.
 The regression scripts in `tests/` use base R and run during `R CMD check`.
 After installing this source, individual scripts can also be run with
 `Rscript tests/<script>.R`.
+
+On 28 October 2026, `R CMD build` and `R CMD check --no-manual` completed
+with status OK using R 4.6.1 on macOS arm64, including all package examples
+and both regression scripts. The latent-draw test fails on unmodified 2.7-6;
+the covariance test fails with only the latent-draw correction installed.
+Both pass with the two corrections together.
